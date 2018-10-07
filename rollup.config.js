@@ -5,7 +5,7 @@ export default {
   output: [
     {
       file: 'bin/bundle.js',
-      name: 'douyuGuess',
+      name: 'douyuGuessHelper',
       format: 'umd'
     }
   ],

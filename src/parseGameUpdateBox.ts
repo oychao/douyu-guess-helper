@@ -1,5 +1,7 @@
 import iDataObject from './interfaces';
 
+import storageUtil from './storageUtil';
+
 function convertToNumber(str: string): number {
   let result: number = NaN;
   if (str.includes('万')) {
@@ -32,12 +34,18 @@ export default function(
       if (winIcon) {
         if (leftWin) {
           dataObject[key].winner = 0;
-          console.log('left win');
+          if ((<any>window).__DOUYU_GUESS_HELPER_DEBUG__) {
+            console.log('left win');
+          }
         } else {
           dataObject[key].winner = 1;
-          console.log('right win');
+          if ((<any>window).__DOUYU_GUESS_HELPER_DEBUG__) {
+            console.log('right win');
+          }
         }
+        dataObject[key].data.pop();
         observer.disconnect();
+        storageUtil.write(dataObject);
         return;
       }
 
@@ -64,13 +72,15 @@ export default function(
           curLosAmount
         ]);
         lastData = curData;
-        console.log([
-          curTime,
-          curWinOdds,
-          curLosOdds,
-          curWinAmount,
-          curLosAmount
-        ]);
+        if ((<any>window).__DOUYU_GUESS_HELPER_DEBUG__) {
+          console.log([
+            curTime,
+            curWinOdds,
+            curLosOdds,
+            curWinAmount,
+            curLosAmount
+          ]);
+        }
       }
     } catch {
       now = Date.now();

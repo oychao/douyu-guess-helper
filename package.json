@@ -1,5 +1,5 @@
 {
-  "name": "douyu-guess",
+  "name": "douyu-guess-helper",
   "version": "1.0.0",
   "main": "./bin/bundle.js",
   "author": {

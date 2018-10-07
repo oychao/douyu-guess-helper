@@ -1,3 +1,3 @@
-import douyuGuess from './main';
+import douyuGuessHelper from './douyuGuess';
 
-export default douyuGuess;
+export default douyuGuessHelper;
