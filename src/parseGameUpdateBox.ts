@@ -18,7 +18,10 @@ export default function(
   let lastData: string;
   let now: number = Date.now();
   const key: string = `${mark}-${now}`;
-  dataObject[key] = [];
+  dataObject[key] = {
+    data: [],
+    winner: -1
+  };
   const observer: MutationObserver = new MutationObserver(() => {
     try {
       const curTime = Math.floor((Date.now() - now) / 5e2);
@@ -28,13 +31,14 @@ export default function(
         .contains(winIcon);
       if (winIcon) {
         if (leftWin) {
-          dataObject[key].push([curTime, 0]);
+          dataObject[key].winner = 0;
           console.log('left win');
         } else {
-          dataObject[key].push([curTime, 1]);
+          dataObject[key].winner = 1;
           console.log('right win');
         }
         observer.disconnect();
+        return;
       }
 
       const curWinOdds = convertToNumber(
@@ -52,7 +56,7 @@ export default function(
       );
       const curData = `${curWinOdds} ${curLosOdds} ${curWinAmount} ${curLosAmount}`;
       if (curData !== lastData) {
-        dataObject[key].push([
+        dataObject[key].data.push([
           curTime,
           curWinOdds,
           curLosOdds,

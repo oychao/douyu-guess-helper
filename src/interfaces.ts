@@ -1,5 +1,8 @@
 interface iDataObject {
-  [key: string]: Array<Array<number>>;
+  [key: string]: {
+    data: Array<Array<number>>;
+    winner: -1 | 0 | 1;
+  };
 }
 
 export default iDataObject;
