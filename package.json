@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "./bin/bundle.js",
   "author": {
-    "name": "your name",
-    "email": "your@email.com"
+    "name": "ouyang",
+    "email": "chao@ouyang.com"
   },
   "license": "MIT",
   "repository": "https://github.com/your/package/address",
