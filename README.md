@@ -1,1 +1,1 @@
-# douyu-guess
+# douyu-guess-helper
