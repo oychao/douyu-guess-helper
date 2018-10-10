@@ -1,6 +1,9 @@
 import iDataObject from './interfaces';
 
 import storageUtil from './storageUtil';
+// import * as tf from '@tensorflow/tfjs';
+
+// const test = tf.sequential();
 
 function convertToNumber(str: string): number {
   let result: number = NaN;
@@ -21,7 +24,7 @@ export default function(
   let now: number = Date.now();
   const key: string = `${mark}-${now}`;
   dataObject[key] = {
-    data: [],
+    data: [[0, 0.1, 0.1, 0, 0]],
     winner: -1
   };
   const observer: MutationObserver = new MutationObserver(() => {
@@ -49,20 +52,20 @@ export default function(
         return;
       }
 
-      const curWinOdds = convertToNumber(
+      const curWinOdds: number = convertToNumber(
         gameUpdateBox.querySelector('.item-left .peilv').textContent.slice(2)
       );
-      const curLosOdds = convertToNumber(
+      const curLosOdds: number = convertToNumber(
         gameUpdateBox.querySelector('.item-right .peilv').textContent.slice(2)
       );
 
-      const curWinAmount = convertToNumber(
+      const curWinAmount: number = convertToNumber(
         gameUpdateBox.querySelector('.bidNum-left').textContent
       );
-      const curLosAmount = convertToNumber(
+      const curLosAmount: number = convertToNumber(
         gameUpdateBox.querySelector('.bidNum-right').textContent
       );
-      const curData = `${curWinOdds} ${curLosOdds} ${curWinAmount} ${curLosAmount}`;
+      const curData: string = `${curWinOdds} ${curLosOdds} ${curWinAmount} ${curLosAmount}`;
       if (curData !== lastData) {
         dataObject[key].data.push([
           curTime,

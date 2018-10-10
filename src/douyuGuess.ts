@@ -25,11 +25,11 @@ export default function(debug: boolean = false): void {
 
   inited = true;
 
-  const guessBox = document.querySelector('.guess-game-box-body');
+  const guessBox: HTMLElement = document.querySelector('.guess-game-box-body');
 
   const dataObject: iDataObject = storageUtil.read();
 
-  const config = { attributes: true, childList: true, subtree: true };
+  const config: object = { attributes: true, childList: true, subtree: true };
 
   const observer = new MutationObserver(
     (mutationsList: Array<MutationRecord>): void => {

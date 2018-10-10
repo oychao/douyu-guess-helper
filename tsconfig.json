@@ -4,7 +4,12 @@
     "noImplicitAny": true,
     "module": "esnext",
     "target": "es6",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "moduleResolution": "node",
+    "lib": ["es5", "es6", "dom"],
+    "declaration": false,
+    "removeComments": true
   },
-  "include": ["./src/**/*"]
+  "include": ["./src/**/*"],
+  "exclude": ["node_modules", "bin", "test/**/*.test.ts"]
 }
