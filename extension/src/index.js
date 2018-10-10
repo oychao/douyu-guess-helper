@@ -204,6 +204,7 @@ const renderSelectBox = function() {
   if (Array.from(selectBox.children).length !== localStorage.length) {
     selectBox.innerHTML = Object.keys(localStorage)
       .map(k => `<option value=${k}>${k}</option>`)
+      .reverse()
       .join('');
   }
 };
