@@ -22,6 +22,7 @@
     "prepare": "npm run build"
   },
   "devDependencies": {
+    "@types/chrome": "0.0.74",
     "babel-core": "^6.26.3",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "babel-preset-env": "^1.7.0",

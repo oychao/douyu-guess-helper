@@ -1,6 +1,3 @@
-import iDataObject from './interfaces';
-
-import storageUtil from './storageUtil';
 // import * as tf from '@tensorflow/tfjs';
 
 // const test = tf.sequential();
@@ -16,39 +13,27 @@ function convertToNumber(str: string): number {
 }
 
 export default function(
-  dataObject: iDataObject,
-  mark: string,
+  key: string,
+  meta: object,
   gameUpdateBox: Element
 ): object {
   let lastData: string;
   let now: number = Date.now();
-  const key: string = `${mark}-${now}`;
-  dataObject[key] = {
-    data: [[0, 0.1, 0.1, 0, 0]],
-    winner: -1
-  };
   const observer: MutationObserver = new MutationObserver(() => {
     try {
-      const curTime = Math.floor((Date.now() - now) / 5e2);
       const winIcon = gameUpdateBox.querySelector('.guessSuccessIcon');
       const leftWin = gameUpdateBox
         .querySelector('.item-left')
         .contains(winIcon);
       if (winIcon) {
-        if (leftWin) {
-          dataObject[key].winner = 0;
-          if ((<any>window).__DOUYU_GUESS_HELPER_DEBUG__) {
-            console.log('left win');
+        chrome.runtime.sendMessage({
+          key,
+          type: 'end',
+          payload: {
+            result: leftWin ? 0 : 1
           }
-        } else {
-          dataObject[key].winner = 1;
-          if ((<any>window).__DOUYU_GUESS_HELPER_DEBUG__) {
-            console.log('right win');
-          }
-        }
-        dataObject[key].data.pop();
+        });
         observer.disconnect();
-        storageUtil.write(dataObject);
         return;
       }
 
@@ -67,23 +52,21 @@ export default function(
       );
       const curData: string = `${curWinOdds} ${curLosOdds} ${curWinAmount} ${curLosAmount}`;
       if (curData !== lastData) {
-        dataObject[key].data.push([
-          curTime,
-          curWinOdds,
-          curLosOdds,
-          curWinAmount,
-          curLosAmount
-        ]);
         lastData = curData;
-        if ((<any>window).__DOUYU_GUESS_HELPER_DEBUG__) {
-          console.log([
-            curTime,
-            curWinOdds,
-            curLosOdds,
-            curWinAmount,
-            curLosAmount
-          ]);
-        }
+        chrome.runtime.sendMessage({
+          key,
+          type: 'data',
+          payload: {
+            meta,
+            data: [
+              Date.now(),
+              curWinOdds,
+              curLosOdds,
+              curWinAmount,
+              curLosAmount
+            ]
+          }
+        });
       }
     } catch {
       now = Date.now();

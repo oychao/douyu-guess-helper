@@ -10,6 +10,7 @@
     "declaration": false,
     "removeComments": true
   },
+  "types": ["chrome"],
   "include": ["./src/**/*"],
   "exclude": ["node_modules", "bin", "test/**/*.test.ts"]
 }

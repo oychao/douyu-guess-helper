@@ -4,7 +4,7 @@ export default {
   input: './src/index.ts',
   output: [
     {
-      file: 'bin/bundle.js',
+      file: 'bin/bundled.js',
       name: 'douyuGuessHelper',
       format: 'iife',
       globals: {
