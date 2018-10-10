@@ -8,15 +8,16 @@ const initData = function(data = [[Date.now(), 0, 0, 0, 0]]) {
   });
   yData1 = data.map(item => item[1] || 0);
   yData2 = data.map(item => item[2] || 0);
-  yData3 = data.map(item => item[3] || 0);
-  yData4 = data.map(item => item[4] || 0);
-  yData5 = yData3.map((item, idx) => {
-    idx = idx === 0 ? 1 : idx;
-    return item - yData3[idx - 1];
-  });
+  yData3 = data.map(item => (item[2] || 0) - (item[1] || 0));
+  yData4 = data.map(item => item[3] || 0);
+  yData5 = data.map(item => item[4] || 0);
   yData6 = yData4.map((item, idx) => {
     idx = idx === 0 ? 1 : idx;
     return item - yData4[idx - 1];
+  });
+  yData7 = yData5.map((item, idx) => {
+    idx = idx === 0 ? 1 : idx;
+    return item - yData5[idx - 1];
   });
 };
 initData();
@@ -35,14 +36,18 @@ const option = {
   },
   grid: [
     {
-      bottom: '75%'
+      bottom: '81%'
     },
     {
-      bottom: '38%',
-      top: '38%'
+      bottom: '54%',
+      top: '27%'
     },
     {
-      top: '75%'
+      bottom: '27%',
+      top: '54%'
+    },
+    {
+      top: '81%'
     }
   ],
   xAxis: [
@@ -57,41 +62,51 @@ const option = {
     {
       data: xData,
       gridIndex: 2
+    },
+    {
+      data: xData,
+      gridIndex: 3
     }
   ],
   yAxis: [
     {
-      name: 'odds',
+      name: '赔率',
       type: 'value',
       gridIndex: 0,
       splitLine: { show: false }
     },
     {
-      name: 'pool',
+      name: '赔率差',
       type: 'value',
       gridIndex: 1,
-      splitLine: { show: false },
-      axisLabel: {
-        formatter(value) {
-          return value > 1e4 ? `${value / 1e4}万` : value;
-        }
-      }
+      splitLine: { show: false }
     },
     {
-      name: 'pool',
+      name: '鱼丸',
       type: 'value',
       gridIndex: 2,
       splitLine: { show: false },
       axisLabel: {
         formatter(value) {
-          return value > 1e4 ? `${value / 1e4}万` : value;
+          return value >= 1e4 ? `${value / 1e4}万` : value;
+        }
+      }
+    },
+    {
+      name: '鱼丸',
+      type: 'value',
+      gridIndex: 3,
+      splitLine: { show: false },
+      axisLabel: {
+        formatter(value) {
+          return value >= 1e4 ? `${value / 1e4}万` : value;
         }
       }
     }
   ],
   series: [
     {
-      name: 'win odds',
+      name: '左赔率',
       xAxisIndex: 0,
       yAxisIndex: 0,
       data: yData1,
@@ -99,7 +114,7 @@ const option = {
       smooth: true
     },
     {
-      name: 'lose odds',
+      name: '右赔率',
       xAxisIndex: 0,
       yAxisIndex: 0,
       data: yData2,
@@ -107,7 +122,7 @@ const option = {
       smooth: true
     },
     {
-      name: 'win pool',
+      name: '赔率差',
       xAxisIndex: 1,
       yAxisIndex: 1,
       data: yData3,
@@ -115,15 +130,15 @@ const option = {
       smooth: true
     },
     {
-      name: 'lose pool',
-      xAxisIndex: 1,
-      yAxisIndex: 1,
+      name: '左押注',
+      xAxisIndex: 2,
+      yAxisIndex: 2,
       data: yData4,
       type: 'line',
       smooth: true
     },
     {
-      name: 'win pool diviation',
+      name: '右押注',
       xAxisIndex: 2,
       yAxisIndex: 2,
       data: yData5,
@@ -131,10 +146,18 @@ const option = {
       smooth: true
     },
     {
-      name: 'lose pool diviation',
-      xAxisIndex: 2,
-      yAxisIndex: 2,
+      name: '左押注差',
+      xAxisIndex: 3,
+      yAxisIndex: 3,
       data: yData6,
+      type: 'line',
+      smooth: true
+    },
+    {
+      name: '右押注差',
+      xAxisIndex: 3,
+      yAxisIndex: 3,
+      data: yData7,
       type: 'line',
       smooth: true
     }
@@ -148,7 +171,7 @@ const renderChart = function(match) {
   const { meta, data } = match;
   initData(data);
   myChart.setOption({
-    xAxis: [{ data: xData }, { data: xData }, { data: xData }],
+    xAxis: [{ data: xData }, { data: xData }, { data: xData }, { data: xData }],
     series: [
       {
         data: yData1
@@ -167,6 +190,9 @@ const renderChart = function(match) {
       },
       {
         data: yData6
+      },
+      {
+        data: yData7
       }
     ]
   });
