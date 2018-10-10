@@ -8,7 +8,7 @@ const initData = function(data = [[Date.now(), 0, 0, 0, 0]]) {
   });
   yData1 = data.map(item => item[1] || 0);
   yData2 = data.map(item => item[2] || 0);
-  yData3 = data.map(item => (item[2] || 0) - (item[1] || 0));
+  yData3 = data.map(item => ((item[2] || 0) * 10 - (item[1] || 0) * 10) / 10);
   yData4 = data.map(item => item[3] || 0);
   yData5 = data.map(item => item[4] || 0);
   yData6 = yData4.map((item, idx) => {
