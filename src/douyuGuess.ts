@@ -1,35 +1,52 @@
-import iDataObject from './interfaces';
-
-import storageUtil from './storageUtil';
 import parseGameUpdateBox from './parseGameUpdateBox';
 
-const title: string = document.location.href.split('/').pop();
+const path: string = document.location.href.split('/').pop();
 
-function startRecording(dataObject: iDataObject, guessBox: Element): void {
-  const elementGuess = Array.from(
+function startRecording(guessBox: Element): void {
+  const guessGameBox = Array.from(guessBox.querySelectorAll('.guess-game-box'));
+  const guessGameUpdateBox = Array.from(
     guessBox.querySelectorAll('.guess-game-update-box')
   );
-  elementGuess.forEach((gameUpdateBox, idx) =>
-    parseGameUpdateBox(dataObject, `${title}-${idx}`, gameUpdateBox)
-  );
-}
 
-let inited: boolean = false;
+  const now = new Date();
+
+  guessGameUpdateBox.forEach((gameUpdateBox, idx) => {
+    const key = `${path}_${guessGameBox[idx].getAttribute('data-qid')}`;
+    const question: string = gameUpdateBox.querySelector('.box-left')
+      .textContent;
+    const left: string = gameUpdateBox.querySelector('.item-left .title')
+      .textContent;
+    const right: string = gameUpdateBox.querySelector('.item-right .title')
+      .textContent;
+
+    const meta = {
+      path,
+      question,
+      index: idx,
+      timestamp: now.getTime(),
+      content: {
+        left,
+        right
+      }
+    };
+    chrome.runtime.sendMessage({
+      key,
+      type: 'new',
+      payload: {
+        meta,
+        data: [Date.now(), 0, 0, 0, 0]
+      }
+    });
+    parseGameUpdateBox(key, meta, gameUpdateBox);
+  });
+}
 
 export default function(debug: boolean = false): void {
   (<any>window).__DOUYU_GUESS_HELPER_DEBUG__ = debug;
 
-  if (inited) {
-    return;
-  }
+  const guessBox: HTMLElement = document.querySelector('.guess-game-box-body');
 
-  inited = true;
-
-  const guessBox = document.querySelector('.guess-game-box-body');
-
-  const dataObject: iDataObject = storageUtil.read();
-
-  const config = { attributes: true, childList: true, subtree: true };
+  const config: object = { attributes: true, childList: true, subtree: true };
 
   const observer = new MutationObserver(
     (mutationsList: Array<MutationRecord>): void => {
@@ -40,7 +57,7 @@ export default function(debug: boolean = false): void {
           mutation.addedNodes.length &&
           addedNodes[0].classList.contains('hasGuessBox')
         ) {
-          startRecording(dataObject, guessBox);
+          startRecording(guessBox);
         }
       }
     }
@@ -48,5 +65,5 @@ export default function(debug: boolean = false): void {
 
   observer.observe(guessBox, config);
 
-  startRecording(dataObject, guessBox);
+  startRecording(guessBox);
 }

@@ -1,3 +1,13 @@
 import douyuGuessHelper from './douyuGuess';
 
-export default douyuGuessHelper;
+const loopInvoke = function() {
+  setTimeout(() => {
+    try {
+      douyuGuessHelper();
+    } catch (error) {
+      loopInvoke();
+      console.log(error);
+    }
+  }, 1e3);
+};
+loopInvoke();

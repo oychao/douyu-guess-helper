@@ -1,0 +1,27 @@
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  margin: 0px;
+  padding: 0px;
+}
+
+#chart {
+  height: calc(100% - 60px);
+  width: 100%;
+}
+
+.meta-key {
+  color: #777777;
+  font-weight: bold;
+  user-select: none;
+}
+
+.meta-value {
+  color: purple;
+  font-weight: bolder;
+  user-select: none;
+}

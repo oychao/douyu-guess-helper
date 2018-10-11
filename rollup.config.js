@@ -4,11 +4,16 @@ export default {
   input: './src/index.ts',
   output: [
     {
-      file: 'bin/bundle.js',
+      file: 'bin/bundled.js',
       name: 'douyuGuessHelper',
-      format: 'umd'
+      format: 'iife',
+      globals: {
+        '@tensorflow/tfjs': 'tf'
+      }
     }
   ],
-  plugins: [typescript()],
-  external: ['fs', 'path', 'jsonfile']
+  plugins: [
+    typescript()
+  ],
+  external: ['fs', 'path', 'jsonfile', '@tensorflow/tfjs']
 };
