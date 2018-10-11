@@ -4,7 +4,7 @@ const initData = function(data = [[Date.now(), 0, 0, 0, 0]]) {
   xData = data.map(item => {
     const d = new Date(item[0]);
     return `${d.getMonth()}-${d.getDate()}
-    ${d.getHours()}:${d.getMinutes()}:${d.getMinutes()}`;
+    ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
   });
   yData1 = data.map(item => item[1] || 0);
   yData2 = data.map(item => item[2] || 0);
