@@ -23,8 +23,7 @@ function startRecording(guessBox: Element): void {
       path,
       question,
       index: idx,
-      timestamp: `${now.getFullYear()}_${now.getMonth() + 1}_${now.getDate() +
-        1}_${now.getHours()}_${now.getMinutes()}_${now.getSeconds()}`,
+      timestamp: now.getTime(),
       content: {
         left,
         right

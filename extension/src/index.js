@@ -1,10 +1,14 @@
+const to2Digit = s => ((s + '').length < 2 ? `0${s}` : s);
+
 const initData = function(data = [[Date.now(), 0, 0, 0, 0]]) {
   data = data;
 
   xData = data.map(item => {
     const d = new Date(item[0]);
-    return `${d.getMonth()}-${d.getDate()}
-    ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+    return `${to2Digit(d.getMonth() + 1)}-${to2Digit(d.getDate())}
+    ${to2Digit(d.getHours())}:${to2Digit(d.getMinutes())}:${to2Digit(
+      d.getSeconds()
+    )}`;
   });
   yData1 = data.map(item => item[1] || 0);
   yData2 = data.map(item => item[2] || 0);
@@ -169,6 +173,23 @@ myChart.setOption(option);
 // ================================
 const renderChart = function(match) {
   const { meta, data } = match;
+  infoBox.innerHTML = `
+  <span class="meta-key">主播ID：</span><span class="meta-value">${
+    meta.path
+  }</span>
+  <span class="meta-key">时间：</span><span class="meta-value">${
+    meta.timestamp
+  }</span>
+  <span class="meta-key">竞猜问题：</span><span class="meta-value">${
+    meta.question
+  }</span>
+  <span class="meta-key">左选项：</span><span class="meta-value">${
+    meta.content.left
+  }</span>
+  <span class="meta-key">右选项：</span><span class="meta-value">${
+    meta.content.right
+  }</span>
+  `;
   initData(data);
   myChart.setOption({
     xAxis: [{ data: xData }, { data: xData }, { data: xData }, { data: xData }],
@@ -199,21 +220,45 @@ const renderChart = function(match) {
 };
 
 const selectBox = document.querySelector('#selectBox');
+const infoBox = document.querySelector('#infoBox');
 
+let currentKey;
 const renderSelectBox = function() {
   if (Array.from(selectBox.children).length !== localStorage.length) {
     selectBox.innerHTML = Object.keys(localStorage)
-      .map(k => `<option value=${k}>${k}</option>`)
-      .reverse()
+      .map(key => {
+        const { meta } = JSON.parse(localStorage.getItem(key));
+        return {
+          key,
+          meta
+        };
+      })
+      .sort((m1, m2) => m2.meta.timestamp - m1.meta.timestamp)
+      .map(({ key, meta }, idx) => {
+        if (idx === 0) {
+          currentKey = key;
+        }
+        const d = new Date(meta.timestamp);
+        return `<option value=${key}>${to2Digit(d.getFullYear())}-${to2Digit(
+          d.getMonth() + 1
+        )}-${to2Digit(d.getDate())} ${to2Digit(d.getHours())}:${to2Digit(
+          d.getMinutes()
+        )}:${to2Digit(d.getSeconds())}  ${meta.path}</option>`;
+      })
       .join('');
   }
 };
 renderSelectBox();
-let currentKey = Object.keys(localStorage).pop();
 renderChart(JSON.parse(localStorage[currentKey]));
 selectBox.addEventListener('change', function(e) {
   currentKey = e.target.value;
-  renderChart(JSON.parse(localStorage[currentKey]));
+  try {
+    const showMatch = JSON.parse(localStorage[currentKey]);
+    renderChart(showMatch);
+  } catch (error) {
+    localStorage.removeItem(currentKey);
+    renderSelectBox();
+  }
 });
 
 window.addEventListener('storage', function(e) {
@@ -226,3 +271,35 @@ window.addEventListener('storage', function(e) {
 window.addEventListener('resize', function() {
   myChart.resize();
 });
+
+const btnClearDirtyData = document.querySelector('#btnClearDirtyData');
+
+btnClearDirtyData.addEventListener('click', function() {
+  const keys = Object.keys(localStorage);
+  Promise.all(
+    keys.map(function(key) {
+      return new Promise(resolve => {
+        const value = JSON.parse(localStorage.getItem(key));
+        console.log(value.data.length);
+        if (
+          value.data.length < 100 ||
+          value.meta.question.includes('飞机航线')
+        ) {
+          localStorage.removeItem(key);
+        } else {
+          value.meta.timestamp = value.data[0][0];
+          value.data = value.data.sort((d1, d2) => {
+            return d1[0] - d2[0];
+          });
+          localStorage[key] = JSON.stringify(value);
+        }
+        resolve();
+      });
+    })
+  ).then(() => {
+    alert('清洗完成');
+    renderSelectBox();
+  });
+});
+
+selectBox.focus();
